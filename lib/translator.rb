@@ -4,42 +4,30 @@ path = './lib/emoticons.yml'
 
 def load_library(path)
   emoticons = YAML.load_file(path)
-  emoticon_lib = {}
-  arr_of_hash = []
-  #emoticon_lib = {'get_meaning'  => {} }
-  emoticons.reject do |meaning, value| 
-    emoticon_lib = { meaning => {} }
-    english = value[0]
-    japanese = value[1]
-    emoticon_lib[meaning]['english'] = english   
-    emoticon_lib[meaning]['japanese'] = japanese
-    arr_of_hash.push(emoticon_lib)
+  newHash = {}
+  
+  emoticons.each do |key, value| 
+    newHash[key] = {}
+    newHash[key][:english] = value[0]
+    newHash[key][:japanese] = value[1]
   end
-  puts arr_of_hash
+  newHash
 end
 
-load_library(path)
 
-def get_japanese_emoticon(emoticon, load_library)
-  translation = ""
-  YAML.load_file(path).each do |key, value|
-    if emoticon == YAML.load_file(path)[key][0]
-      translation = YAML.load_file(path)[key][1]
-    end
-  end   
-  translation
+def get_japanese_emoticon(path, emoticon)
+  library = load_library(path)
+  emoticon = library.keys.find do |key|
+    library[key][:english] == emoticon
+  end
+  emoticon ? library[emoticon][:japanese] : "Sorry, that emoticon was not found"
 end
 
-#get_japanese_emoticon(":$", emoji)
 
-def get_english_meaning(item, emoji)
-  translation = ""
-  emoji.each do |key, value|
-    if item == emoji[key][1]
-      translation = emoji[key][0]
-    end
-  end   
-  translation
+def get_english_meaning(path, emoticon)
+  library = load_library(path)
+  emoticon = library.keys.find do |key|
+    library[key][:japanese] == emoticon
+  end
+  emoticon ? emoticon: "Sorry, that emoticon was not found"
 end
-
-#get_english_meaning("(#^.^#)", emoji)
